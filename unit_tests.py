@@ -159,10 +159,11 @@ class MainUnitTestCase(unittest2.TestCase):
     @patch('mail_validator.dkim.verify')
     def test_should_not_validate_message_with_old_dkim_selector(self, patchdkimverify):
         patchdkimverify.return_value = True
-        mail = TestHelper().generate_Test_Message(dkim=True, selector='20120101101010')
+        selector = '20120101101010'
+        mail = TestHelper().generate_Test_Message(dkim=True, selector=selector)
         return_code, message = self.mail_validator.validate_message(mail, self.options, self.options.output)
         self.assertEqual(return_code, 2, "Returncode should be 2")
-        self.assertTrue('DKIM key older than' in message, "Message contain a hint to the old key")
+        self.assertTrue('DKIM key (%s) older than' % selector in message, "Message contain a hint to the old key")
 
     @patch('mail_validator.dkim.verify')
     def test_should_not_validate_incorrect_message_with_dkim(self, patchdkimverify):
